@@ -1,6 +1,6 @@
 # Binaries
 bin/
-sl-friends
+/sl-friends
 *.exe
 
 # Config with secrets
