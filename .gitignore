@@ -1,0 +1,25 @@
+# Binaries
+bin/
+sl-friends
+*.exe
+
+# Config with secrets
+config.yaml
+
+# Go
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local files
+the-original/
+docs/
+.claude/

@@ -1,0 +1,17 @@
+# Second Life session token (from browser cookies)
+# How to get: login to secondlife.com → F12 → Application → Cookies → session-token
+token: ""
+token_encoded: false
+
+# Display settings
+filter: "online"            # online | offline | all
+refresh: 5s
+show_internal_names: false
+show_lindens: true
+show_groups: true
+layout: "dashboard"
+
+# Notifications — get alerted when specific friends come online
+notify:
+  enabled: false
+  users: []                 # e.g. ["alice.doe", "bob.smith"]
