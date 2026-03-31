@@ -1,14 +1,30 @@
-<div id="widgetFriendsOnlineContent">
-  <a class="trigger online" href="#">
-    <span title="alice.doe Resident">Alice Wonder</span>
-  </a>
-  <br/>
-  <a class="trigger online" href="#">
-    <span title="bob.smith Resident">Bob Smith</span>
-  </a>
-  <br/>
-  <a class="trigger offline" href="#">
-    <span title="charlie.rose Resident">Charlie Rose</span>
-  </a>
-  <br/>
-</div>
+
+    <div id="widgetFriendsOnlineContent" style="display:none;">
+        <table border="0" cellspacing="0" cellpadding="5">
+            <tr>
+                <th width="57%">Name</th>
+                <th width="43%">Status</th>
+            </tr>
+                            <tr class="friend-status">
+                                <td class="trigger online friend">
+                                                                        <span title="alice.doe Resident">Alice Wonder</span>
+                                                                                                        <br><span class="username">(alice.doe)</span>
+                                                                </td>
+                                <td class="trigger online">online</td>
+                            </tr>
+                            <tr class="friend-status">
+                                <td class="trigger online friend">
+                                                                        <span title="bob.smith">Bob Smith</span>
+                                                                                                        <br><span class="username">(bob.smith)</span>
+                                                                </td>
+                                <td class="trigger online">online</td>
+                            </tr>
+                            <tr class="friend-status">
+                                <td class="trigger offline friend">
+                                                                        <span title="charlie.rose Resident">Charlie Rose</span>
+                                                                                                        <br><span class="username">(charlie.rose)</span>
+                                                                </td>
+                                <td class="trigger offline">offline</td>
+                            </tr>
+                        </table>
+    </div>

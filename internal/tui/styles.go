@@ -6,7 +6,7 @@ var (
 	colorPrimary   = lipgloss.Color("#7B61FF")
 	colorSecondary = lipgloss.Color("#36CFC9")
 	colorOnline    = lipgloss.Color("#52C41A")
-	colorOffline   = lipgloss.Color("#8C8C8C")
+	colorOffline   = lipgloss.Color("#FF4D4F")
 	colorError     = lipgloss.Color("#FF4D4F")
 	colorBorder    = lipgloss.Color("#434343")
 	colorTitle     = lipgloss.Color("#FFFFFF")

@@ -92,6 +92,10 @@ groups, err := client.FetchGroups(context.Background())
 lindens, err := client.FetchLindens(context.Background())
 ```
 
+## TODO
+
+- [ ] Groups HTML selector needs to be confirmed with real SL data (currently uses a guessed selector)
+
 ## Credits
 
 - Original bash version by [Jiab77](https://github.com/Jiab77/sl-friends)

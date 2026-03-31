@@ -27,11 +27,12 @@ type NotifyConfig struct {
 
 func Default() *Config {
 	return &Config{
-		Filter:      "online",
-		Refresh:     5 * time.Second,
-		ShowLindens: true,
-		ShowGroups:  true,
-		Layout:      "dashboard",
+		Filter:       "online",
+		Refresh:      5 * time.Second,
+		ShowInternal: true,
+		ShowLindens:  true,
+		ShowGroups:   true,
+		Layout:       "dashboard",
 	}
 }
 
@@ -53,7 +54,7 @@ func LoadWithViper(v *viper.Viper) (*Config, error) {
 func setDefaults(v *viper.Viper) {
 	v.SetDefault("filter", "online")
 	v.SetDefault("refresh", 5*time.Second)
-	v.SetDefault("show_internal_names", false)
+	v.SetDefault("show_internal_names", true)
 	v.SetDefault("show_lindens", true)
 	v.SetDefault("show_groups", true)
 	v.SetDefault("layout", "dashboard")

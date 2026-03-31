@@ -21,15 +21,22 @@ func (c *Client) FetchFriends(ctx context.Context) ([]Friend, error) {
 	}
 
 	var friends []Friend
-	doc.Find("#widgetFriendsOnlineContent .trigger").Each(func(i int, s *goquery.Selection) {
-		span := s.Find("span")
-		internalName := strings.TrimSuffix(span.AttrOr("title", ""), " Resident")
-		friend := Friend{
-			DisplayName:  strings.TrimSpace(span.Text()),
-			InternalName: internalName,
-			Online:       s.HasClass("online"),
+	doc.Find("#widgetFriendsOnlineContent tr.friend-status").Each(func(i int, s *goquery.Selection) {
+		nameTd := s.Find("td.friend")
+		statusTd := s.Find("td").Not(".friend")
+
+		nameSpan := nameTd.Find("span").First()
+		displayName := strings.TrimSpace(nameSpan.Text())
+		internalName := strings.TrimSuffix(nameSpan.AttrOr("title", ""), " Resident")
+		online := statusTd.HasClass("online")
+
+		if displayName != "" {
+			friends = append(friends, Friend{
+				DisplayName:  displayName,
+				InternalName: internalName,
+				Online:       online,
+			})
 		}
-		friends = append(friends, friend)
 	})
 
 	return friends, nil

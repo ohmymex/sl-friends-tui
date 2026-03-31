@@ -15,6 +15,9 @@ func TestLoad_Defaults(t *testing.T) {
 	if cfg.Refresh != 5*time.Second {
 		t.Errorf("expected refresh 5s, got %v", cfg.Refresh)
 	}
+	if cfg.ShowInternal != true {
+		t.Error("expected show_internal_names true by default")
+	}
 	if cfg.ShowLindens != true {
 		t.Error("expected show_lindens true by default")
 	}
