@@ -1,0 +1,11 @@
+token: "abc-123-def"
+token_encoded: true
+filter: "offline"
+refresh: 10s
+show_internal_names: true
+show_lindens: false
+show_groups: false
+layout: "dashboard"
+notify:
+  enabled: true
+  users: ["alice.doe", "bob.smith"]
