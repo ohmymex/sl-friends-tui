@@ -2,6 +2,7 @@ package tui
 
 import (
 	"context"
+	"math/rand/v2"
 	"time"
 
 	"github.com/charmbracelet/bubbles/textinput"
@@ -71,13 +72,18 @@ func New(client *sl.Client, cfg *config.Config, notifier notify.Notifier) *App {
 	}
 }
 
-func NewDemo(cfg *config.Config) *App {
+func NewDemo(cfg *config.Config, notifier notify.Notifier) *App {
+	friends := generateDemoFriends(50)
+	cfg.Notify.Enabled = true
+	cfg.Notify.Users = []string{friends[0].InternalName, friends[1].InternalName, friends[2].InternalName}
+
 	return &App{
 		config:     cfg,
+		notifier:   notifier,
 		activePane: PaneFriends,
 		search:     newSearchInput(),
 		demo:       true,
-		friends:    generateDemoFriends(50),
+		friends:    friends,
 		groups:     generateDemoGroups(12),
 		lindens:    &sl.Lindens{Balance: "13,370"},
 		notified:   make(map[string]bool),
@@ -85,14 +91,22 @@ func NewDemo(cfg *config.Config) *App {
 	}
 }
 
+type DemoTickMsg time.Time
+
 func (a *App) Init() tea.Cmd {
 	if a.demo {
-		return nil
+		return demoTickCmd()
 	}
 	return tea.Batch(
 		tickCmd(a.config.Refresh),
 		fetchAllCmd(a.client),
 	)
+}
+
+func demoTickCmd() tea.Cmd {
+	return tea.Tick(3*time.Second, func(t time.Time) tea.Msg {
+		return DemoTickMsg(t)
+	})
 }
 
 func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -105,10 +119,11 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		a.height = msg.Height
 		return a, nil
 
+	case DemoTickMsg:
+		a.demoToggleFriend()
+		return a, demoTickCmd()
+
 	case TickMsg:
-		if a.demo {
-			return a, nil
-		}
 		return a, tea.Batch(
 			tickCmd(a.config.Refresh),
 			fetchAllCmd(a.client),
@@ -249,6 +264,15 @@ func (a *App) panelContentHeight() int {
 		h = 1
 	}
 	return h
+}
+
+func (a *App) demoToggleFriend() {
+	if len(a.friends) == 0 {
+		return
+	}
+	idx := rand.IntN(len(a.friends))
+	a.friends[idx].Online = !a.friends[idx].Online
+	a.checkNotifications(a.friends)
 }
 
 func (a *App) cycleFilter() {

@@ -15,3 +15,12 @@ layout: "dashboard"
 notify:
   enabled: false
   users: []                 # e.g. ["alice.doe", "bob.smith"]
+
+  # ntfy.sh — push notifications to your phone
+  # Setup: install ntfy app, subscribe to your topic name
+  ntfy:
+    enabled: false
+    server: "https://ntfy.sh"
+    topic: ""               # pick something random, e.g. "sl-friends-a8f3x9"
+    token: ""               # optional, for authenticated topics
+    priority: 3             # 1=min, 3=default, 5=urgent

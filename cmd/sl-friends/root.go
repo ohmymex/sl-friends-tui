@@ -80,7 +80,18 @@ func run(cmd *cobra.Command, args []string) error {
 
 	demo, _ := cmd.Flags().GetBool("demo")
 	if demo {
-		app := tui.NewDemo(cfg)
+		var demoNotifier notify.Notifier
+		if cfg.Notify.Ntfy.Enabled && cfg.Notify.Ntfy.Topic != "" {
+			var ntfyOpts []notify.NtfyOption
+			if cfg.Notify.Ntfy.Token != "" {
+				ntfyOpts = append(ntfyOpts, notify.WithNtfyToken(cfg.Notify.Ntfy.Token))
+			}
+			if cfg.Notify.Ntfy.Priority != 0 {
+				ntfyOpts = append(ntfyOpts, notify.WithNtfyPriority(cfg.Notify.Ntfy.Priority))
+			}
+			demoNotifier = notify.NewNtfyNotifier(cfg.Notify.Ntfy.Server, cfg.Notify.Ntfy.Topic, ntfyOpts...)
+		}
+		app := tui.NewDemo(cfg, demoNotifier)
 		p := tea.NewProgram(app, tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
 			return fmt.Errorf("TUI error: %w", err)
@@ -113,7 +124,25 @@ func run(cmd *cobra.Command, args []string) error {
 
 	var notifier notify.Notifier
 	if cfg.Notify.Enabled {
-		notifier = notify.NewDesktopNotifier()
+		var notifiers []notify.Notifier
+		notifiers = append(notifiers, notify.NewDesktopNotifier())
+
+		if cfg.Notify.Ntfy.Enabled && cfg.Notify.Ntfy.Topic != "" {
+			var ntfyOpts []notify.NtfyOption
+			if cfg.Notify.Ntfy.Token != "" {
+				ntfyOpts = append(ntfyOpts, notify.WithNtfyToken(cfg.Notify.Ntfy.Token))
+			}
+			if cfg.Notify.Ntfy.Priority != 0 {
+				ntfyOpts = append(ntfyOpts, notify.WithNtfyPriority(cfg.Notify.Ntfy.Priority))
+			}
+			notifiers = append(notifiers, notify.NewNtfyNotifier(cfg.Notify.Ntfy.Server, cfg.Notify.Ntfy.Topic, ntfyOpts...))
+		}
+
+		if len(notifiers) == 1 {
+			notifier = notifiers[0]
+		} else {
+			notifier = notify.NewMultiNotifier(notifiers...)
+		}
 	}
 
 	app := tui.New(client, cfg, notifier)

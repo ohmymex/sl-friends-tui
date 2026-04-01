@@ -21,8 +21,17 @@ type Config struct {
 }
 
 type NotifyConfig struct {
-	Enabled bool     `mapstructure:"enabled"`
-	Users   []string `mapstructure:"users"`
+	Enabled bool       `mapstructure:"enabled"`
+	Users   []string   `mapstructure:"users"`
+	Ntfy    NtfyConfig `mapstructure:"ntfy"`
+}
+
+type NtfyConfig struct {
+	Enabled  bool   `mapstructure:"enabled"`
+	Server   string `mapstructure:"server"`
+	Topic    string `mapstructure:"topic"`
+	Token    string `mapstructure:"token"`
+	Priority int    `mapstructure:"priority"`
 }
 
 func Default() *Config {
@@ -59,6 +68,9 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("show_groups", true)
 	v.SetDefault("layout", "dashboard")
 	v.SetDefault("notify.enabled", false)
+	v.SetDefault("notify.ntfy.enabled", false)
+	v.SetDefault("notify.ntfy.server", "https://ntfy.sh")
+	v.SetDefault("notify.ntfy.priority", 3)
 }
 
 func unmarshal(v *viper.Viper) (*Config, error) {
