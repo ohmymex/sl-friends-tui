@@ -121,6 +121,8 @@ Both desktop and mobile notifications fire simultaneously.
 ## TODO
 
 - [ ] Confirm groups HTML selector with real SL data
+- [ ] Account summary panel (membership plan, status, L$/USD balance, land holdings) from `/my/account/index.php`
+- [ ] Profile data from `my.secondlife.com` (interests, SL birthdate, bio) — requires AJAX with CSRF token
 
 ## Credits
 
