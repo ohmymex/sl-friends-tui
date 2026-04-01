@@ -12,6 +12,7 @@ Go rewrite of [sl-friends](https://github.com/Jiab77/sl-friends) (bash). Single 
 - Real-time search/filter
 - Scrollable panels (j/k or arrow keys)
 - Desktop notifications when watched friends come online
+- ntfy.sh push notifications to your phone
 - Configurable auto-refresh interval
 - Debug mode for HTTP request logging
 - Demo mode for testing without a token
@@ -98,10 +99,28 @@ groups, err := client.FetchGroups(context.Background())
 lindens, err := client.FetchLindens(context.Background())
 ```
 
+## ntfy.sh (Mobile Notifications)
+
+Get push notifications on your phone when friends come online.
+
+1. Install the [ntfy app](https://ntfy.sh) on your phone (Android/iOS)
+2. Subscribe to a topic (pick something random, e.g. `sl-friends-a8f3x9`)
+3. Add to your `config.yaml`:
+
+```yaml
+notify:
+  enabled: true
+  users: ["alice.doe"]
+  ntfy:
+    enabled: true
+    topic: "sl-friends-a8f3x9"
+```
+
+Both desktop and mobile notifications fire simultaneously.
+
 ## TODO
 
 - [ ] Confirm groups HTML selector with real SL data
-- [ ] ntfy.sh push notification backend (mobile notifications)
 
 ## Credits
 
