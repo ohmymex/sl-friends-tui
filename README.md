@@ -6,6 +6,7 @@ Go rewrite of [sl-friends](https://github.com/Jiab77/sl-friends) (bash). Single 
 
 ## Features
 
+- Account summary bar (username, plan, status, L$/USD balance, country)
 - Friends list with online/offline status and internal names
 - Groups list with member count
 - L$ balance display
@@ -97,6 +98,7 @@ client := sl.NewClient("your-token")
 friends, err := client.FetchFriends(context.Background())
 groups, err := client.FetchGroups(context.Background())
 lindens, err := client.FetchLindens(context.Background())
+account, err := client.FetchAccount(context.Background())
 ```
 
 ## ntfy.sh (Mobile Notifications)
@@ -121,7 +123,6 @@ Both desktop and mobile notifications fire simultaneously.
 ## TODO
 
 - [ ] Confirm groups HTML selector with real SL data
-- [ ] Account summary panel (membership plan, status, L$/USD balance, land holdings) from `/my/account/index.php`
 - [ ] Profile data from `my.secondlife.com` (interests, SL birthdate, bio) — requires AJAX with CSRF token
 
 ## Credits
