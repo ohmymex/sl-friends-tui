@@ -45,12 +45,14 @@ type App struct {
 	lindens *sl.Lindens
 	err     error
 
-	activePane Pane
-	search     textinput.Model
-	searching  bool
-	showHelp   bool
-	width      int
-	height     int
+	activePane    Pane
+	search        textinput.Model
+	searching     bool
+	showHelp      bool
+	width         int
+	height        int
+	friendsScroll int
+	groupsScroll  int
 
 	notified   map[string]bool
 	prevOnline map[string]bool
@@ -172,12 +174,64 @@ func (a *App) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "?":
 		a.showHelp = !a.showHelp
 		return a, nil
+	case "j", "down":
+		a.scrollDown()
+		return a, nil
+	case "k", "up":
+		a.scrollUp()
+		return a, nil
 	}
 
 	return a, nil
 }
 
+func (a *App) scrollDown() {
+	if a.activePane == PaneFriends {
+		maxScroll := len(filterFriends(a.friends, a.config.Filter, a.search.Value())) - a.panelContentHeight()
+		if maxScroll < 0 {
+			maxScroll = 0
+		}
+		if a.friendsScroll < maxScroll {
+			a.friendsScroll++
+		}
+	} else {
+		maxScroll := len(a.groups) - a.panelContentHeight()
+		if maxScroll < 0 {
+			maxScroll = 0
+		}
+		if a.groupsScroll < maxScroll {
+			a.groupsScroll++
+		}
+	}
+}
+
+func (a *App) scrollUp() {
+	if a.activePane == PaneFriends {
+		if a.friendsScroll > 0 {
+			a.friendsScroll--
+		}
+	} else {
+		if a.groupsScroll > 0 {
+			a.groupsScroll--
+		}
+	}
+}
+
+func (a *App) panelContentHeight() int {
+	statusBarHeight := 3
+	searchBarHeight := 0
+	if a.searching {
+		searchBarHeight = 3
+	}
+	h := a.height - statusBarHeight - searchBarHeight - 5
+	if h < 1 {
+		h = 1
+	}
+	return h
+}
+
 func (a *App) cycleFilter() {
+	a.friendsScroll = 0
 	switch a.config.Filter {
 	case "online":
 		a.config.Filter = "offline"
@@ -256,6 +310,7 @@ func (a *App) View() string {
 		a.config.ShowInternal,
 		friendsPanelWidth,
 		panelHeight,
+		a.friendsScroll,
 	)
 
 	groupsPanel := renderGroupsPanel(
@@ -263,6 +318,7 @@ func (a *App) View() string {
 		a.activePane == PaneGroups,
 		groupsPanelWidth,
 		panelHeight,
+		a.groupsScroll,
 	)
 
 	panels := lipgloss.JoinHorizontal(lipgloss.Top, friendsPanel, groupsPanel)

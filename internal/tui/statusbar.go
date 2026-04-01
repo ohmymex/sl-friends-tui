@@ -41,6 +41,7 @@ func renderStatusBar(lindens string, filter string, refresh time.Duration, err e
 func renderHelp() string {
 	keys := []struct{ key, desc string }{
 		{"Tab", "Switch pane"},
+		{"j/k", "Scroll down/up"},
 		{"/", "Search friends"},
 		{"Esc", "Cancel search"},
 		{"f", "Cycle filter"},

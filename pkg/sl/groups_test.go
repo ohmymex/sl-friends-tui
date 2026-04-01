@@ -34,8 +34,14 @@ func TestFetchGroups_Success(t *testing.T) {
 	if groups[0].Name != "Builders United" {
 		t.Errorf("expected 'Builders United', got %q", groups[0].Name)
 	}
+	if groups[0].MemberCount != "42" {
+		t.Errorf("expected member count '42', got %q", groups[0].MemberCount)
+	}
 	if groups[2].Name != "Fashion Circle" {
 		t.Errorf("expected 'Fashion Circle', got %q", groups[2].Name)
+	}
+	if groups[2].MemberCount != "15" {
+		t.Errorf("expected member count '15', got %q", groups[2].MemberCount)
 	}
 }
 

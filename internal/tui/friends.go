@@ -8,7 +8,7 @@ import (
 	"github.com/ohmymex/sl-friends-tui/pkg/sl"
 )
 
-func renderFriendsPanel(friends []sl.Friend, filter string, searchQuery string, focused bool, showInternal bool, width, height int) string {
+func renderFriendsPanel(friends []sl.Friend, filter string, searchQuery string, focused bool, showInternal bool, width, height int, scroll int) string {
 	filtered := filterFriends(friends, filter, searchQuery)
 
 	onlineCount := 0
@@ -34,7 +34,12 @@ func renderFriendsPanel(friends []sl.Friend, filter string, searchQuery string, 
 		lines = append(lines, statusItemStyle.Render("  No friends to display"))
 	}
 
-	content := strings.Join(lines, "\n")
+	if scroll > len(lines) {
+		scroll = len(lines)
+	}
+	visible := lines[scroll:]
+
+	content := strings.Join(visible, "\n")
 
 	style := panelStyle
 	if focused {

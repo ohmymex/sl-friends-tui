@@ -21,10 +21,11 @@ func (c *Client) FetchGroups(ctx context.Context) ([]Group, error) {
 	}
 
 	var groups []Group
-	doc.Find("#widgetGroupsContent .trigger").Each(func(i int, s *goquery.Selection) {
-		name := strings.TrimSpace(s.Find("span").Text())
+	doc.Find(".group-status").Each(func(i int, s *goquery.Selection) {
+		name := strings.TrimSpace(s.Find("strong").Text())
+		members := strings.TrimSpace(s.Find("td").Last().Text())
 		if name != "" {
-			groups = append(groups, Group{Name: name})
+			groups = append(groups, Group{Name: name, MemberCount: members})
 		}
 	})
 

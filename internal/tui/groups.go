@@ -7,19 +7,28 @@ import (
 	"github.com/ohmymex/sl-friends-tui/pkg/sl"
 )
 
-func renderGroupsPanel(groups []sl.Group, focused bool, width, height int) string {
+func renderGroupsPanel(groups []sl.Group, focused bool, width, height int, scroll int) string {
 	title := titleStyle.Render(fmt.Sprintf("Groups (%d)", len(groups)))
 
 	var lines []string
 	for _, g := range groups {
-		lines = append(lines, fmt.Sprintf("  %s", g.Name))
+		if g.MemberCount != "" {
+			lines = append(lines, fmt.Sprintf("  %s (%s)", g.Name, g.MemberCount))
+		} else {
+			lines = append(lines, fmt.Sprintf("  %s", g.Name))
+		}
 	}
 
 	if len(lines) == 0 {
 		lines = append(lines, statusItemStyle.Render("  No groups to display"))
 	}
 
-	content := strings.Join(lines, "\n")
+	if scroll > len(lines) {
+		scroll = len(lines)
+	}
+	visible := lines[scroll:]
+
+	content := strings.Join(visible, "\n")
 
 	style := panelStyle
 	if focused {

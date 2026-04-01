@@ -71,6 +71,7 @@ Run `sl-friends --help` for all options.
 
 ```
 Tab     Switch focus between panels
+j/k     Scroll down/up in focused panel
 /       Search friends
 Esc     Cancel search
 f       Cycle filter (online/offline/all)

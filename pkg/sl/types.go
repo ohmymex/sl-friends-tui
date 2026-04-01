@@ -9,7 +9,8 @@ type Friend struct {
 
 // Group represents a Second Life group.
 type Group struct {
-	Name string
+	Name        string
+	MemberCount string
 }
 
 // Lindens represents the L$ balance.
