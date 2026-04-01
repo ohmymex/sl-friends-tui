@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"math/rand/v2"
 	"net/http"
 	"time"
@@ -31,6 +32,7 @@ type Client struct {
 	token      string
 	baseURL    string
 	userAgents []string
+	logger     *log.Logger
 }
 
 type Option func(*Client)
@@ -49,6 +51,10 @@ func WithBaseURL(url string) Option {
 
 func WithHTTPClient(hc *http.Client) Option {
 	return func(c *Client) { c.http = hc }
+}
+
+func WithLogger(l *log.Logger) Option {
+	return func(c *Client) { c.logger = l }
 }
 
 func NewClient(token string, opts ...Option) *Client {
@@ -70,16 +76,35 @@ func (c *Client) fetch(ctx context.Context, path string) (io.ReadCloser, error) 
 	if err != nil {
 		return nil, fmt.Errorf("create request: %w", err)
 	}
-	req.Header.Set("User-Agent", c.randomUA())
+
+	ua := c.randomUA()
+	req.Header.Set("User-Agent", ua)
 	req.AddCookie(&http.Cookie{Name: "session-token", Value: c.token})
+
+	if c.logger != nil {
+		c.logger.Printf("GET %s | UA: %s", url, ua)
+	}
+
+	start := time.Now()
 	resp, err := c.http.Do(req)
+	elapsed := time.Since(start)
+
 	if err != nil {
+		if c.logger != nil {
+			c.logger.Printf("ERR %s | %v | %s", url, err, elapsed)
+		}
 		return nil, fmt.Errorf("request %s: %w", path, err)
 	}
+
+	if c.logger != nil {
+		c.logger.Printf("RSP %s | %d | %s | %s", url, resp.StatusCode, resp.Status, elapsed)
+	}
+
 	if resp.StatusCode != http.StatusOK {
 		resp.Body.Close()
 		return nil, fmt.Errorf("unexpected status %d for %s", resp.StatusCode, path)
 	}
+
 	return resp.Body, nil
 }
 

@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -39,6 +41,8 @@ func init() {
 	rootCmd.Flags().Bool("show-groups", false, "show groups")
 	rootCmd.Flags().String("layout", "", "TUI layout: dashboard")
 	rootCmd.Flags().StringSlice("notify", nil, "friends to watch (comma-separated)")
+	rootCmd.Flags().Bool("demo", false, "run with dummy data for testing")
+	rootCmd.Flags().Bool("debug", false, "log HTTP requests to stderr (capture with 2> debug.log)")
 
 	viper.BindPFlag("token", rootCmd.Flags().Lookup("token"))
 	viper.BindPFlag("token_encoded", rootCmd.Flags().Lookup("token-encoded"))
@@ -74,6 +78,16 @@ func run(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("load config: %w", err)
 	}
 
+	demo, _ := cmd.Flags().GetBool("demo")
+	if demo {
+		app := tui.NewDemo(cfg)
+		p := tea.NewProgram(app, tea.WithAltScreen())
+		if _, err := p.Run(); err != nil {
+			return fmt.Errorf("TUI error: %w", err)
+		}
+		return nil
+	}
+
 	token, err := cfg.ResolveToken()
 	if err != nil {
 		return fmt.Errorf("token required: set via --token flag, SLF_TOKEN env var, or config.yaml\n  %w", err)
@@ -84,7 +98,18 @@ func run(cmd *cobra.Command, args []string) error {
 		cfg.Notify.Users = notifyUsers
 	}
 
-	client := sl.NewClient(token)
+	debug, _ := cmd.Flags().GetBool("debug")
+
+	var clientOpts []sl.Option
+	if debug {
+		logger := log.New(os.Stderr, "[sl-debug] ", log.LstdFlags|log.Lmicroseconds)
+		clientOpts = append(clientOpts, sl.WithLogger(logger))
+		logger.Println("debug mode enabled")
+		logger.Printf("token: %s...%s", token[:8], token[len(token)-4:])
+		logger.Printf("filter: %s | refresh: %s", cfg.Filter, cfg.Refresh)
+	}
+
+	client := sl.NewClient(token, clientOpts...)
 
 	var notifier notify.Notifier
 	if cfg.Notify.Enabled {

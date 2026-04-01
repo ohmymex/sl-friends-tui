@@ -49,6 +49,7 @@ type App struct {
 	search        textinput.Model
 	searching     bool
 	showHelp      bool
+	demo          bool
 	width         int
 	height        int
 	friendsScroll int
@@ -70,7 +71,24 @@ func New(client *sl.Client, cfg *config.Config, notifier notify.Notifier) *App {
 	}
 }
 
+func NewDemo(cfg *config.Config) *App {
+	return &App{
+		config:     cfg,
+		activePane: PaneFriends,
+		search:     newSearchInput(),
+		demo:       true,
+		friends:    generateDemoFriends(50),
+		groups:     generateDemoGroups(12),
+		lindens:    &sl.Lindens{Balance: "13,370"},
+		notified:   make(map[string]bool),
+		prevOnline: make(map[string]bool),
+	}
+}
+
 func (a *App) Init() tea.Cmd {
+	if a.demo {
+		return nil
+	}
 	return tea.Batch(
 		tickCmd(a.config.Refresh),
 		fetchAllCmd(a.client),
@@ -88,6 +106,9 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return a, nil
 
 	case TickMsg:
+		if a.demo {
+			return a, nil
+		}
 		return a, tea.Batch(
 			tickCmd(a.config.Refresh),
 			fetchAllCmd(a.client),
