@@ -39,6 +39,14 @@ func renderFriendsPanel(friends []sl.Friend, filter string, searchQuery string, 
 	}
 	visible := lines[scroll:]
 
+	maxVisible := height - 3
+	if maxVisible < 1 {
+		maxVisible = 1
+	}
+	if len(visible) > maxVisible {
+		visible = visible[:maxVisible]
+	}
+
 	content := strings.Join(visible, "\n")
 
 	style := panelStyle
