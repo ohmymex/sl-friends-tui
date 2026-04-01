@@ -6,12 +6,15 @@ Go rewrite of [sl-friends](https://github.com/Jiab77/sl-friends) (bash). Single 
 
 ## Features
 
-- Friends list with online/offline status and optional internal names
-- Groups list
+- Friends list with online/offline status and internal names
+- Groups list with member count
 - L$ balance display
 - Real-time search/filter
+- Scrollable panels (j/k or arrow keys)
 - Desktop notifications when watched friends come online
 - Configurable auto-refresh interval
+- Debug mode for HTTP request logging
+- Demo mode for testing without a token
 - Works on Linux, macOS, and Windows
 
 ## Install
@@ -62,6 +65,8 @@ sl-friends --token "your-token"     # pass token directly
 sl-friends --filter offline         # show offline friends
 sl-friends --refresh 10s            # custom refresh interval
 sl-friends --notify alice.doe       # notify when alice comes online
+sl-friends --debug 2> debug.log     # log HTTP requests to file
+sl-friends --demo                   # run with dummy data (no token needed)
 SLF_TOKEN="token" sl-friends        # token via env var
 ```
 
@@ -95,7 +100,8 @@ lindens, err := client.FetchLindens(context.Background())
 
 ## TODO
 
-- [ ] Groups HTML selector needs to be confirmed with real SL data (currently uses a guessed selector)
+- [ ] Confirm groups HTML selector with real SL data
+- [ ] ntfy.sh push notification backend (mobile notifications)
 
 ## Credits
 
