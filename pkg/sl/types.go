@@ -17,3 +17,13 @@ type Group struct {
 type Lindens struct {
 	Balance string
 }
+
+type Account struct {
+	Username    string
+	Plan        string
+	Status      string
+	Country     string
+	LBalance    string
+	USDBalance  string
+	LandCurrent string
+}

@@ -34,6 +34,10 @@ type (
 		lindens *sl.Lindens
 		err     error
 	}
+	AccountResultMsg struct {
+		account *sl.Account
+		err     error
+	}
 )
 
 type App struct {
@@ -44,6 +48,7 @@ type App struct {
 	friends []sl.Friend
 	groups  []sl.Group
 	lindens *sl.Lindens
+	account *sl.Account
 	err     error
 
 	activePane    Pane
@@ -86,6 +91,15 @@ func NewDemo(cfg *config.Config, notifier notify.Notifier) *App {
 		friends:    friends,
 		groups:     generateDemoGroups(12),
 		lindens:    &sl.Lindens{Balance: "13,370"},
+		account: &sl.Account{
+			Username:    "DemoUser",
+			Plan:        "Premium Membership",
+			Status:      "Active",
+			Country:     "united states",
+			LBalance:    "L$ 13,370",
+			USDBalance:  "US $42.00",
+			LandCurrent: "512 square meters",
+		},
 		notified:   make(map[string]bool),
 		prevOnline: make(map[string]bool),
 	}
@@ -152,6 +166,14 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			a.err = msg.err
 		} else {
 			a.lindens = msg.lindens
+		}
+		return a, nil
+
+	case AccountResultMsg:
+		if msg.err != nil {
+			a.err = msg.err
+		} else {
+			a.account = msg.account
 		}
 		return a, nil
 	}
@@ -256,10 +278,14 @@ func (a *App) scrollUp() {
 func (a *App) panelContentHeight() int {
 	statusBarHeight := 3
 	searchBarHeight := 0
+	accountBarHeight := 0
 	if a.searching {
 		searchBarHeight = 3
 	}
-	h := a.height - statusBarHeight - searchBarHeight - 5
+	if a.account != nil {
+		accountBarHeight = 3
+	}
+	h := a.height - statusBarHeight - searchBarHeight - accountBarHeight - 5
 	if h < 1 {
 		h = 1
 	}
@@ -334,12 +360,18 @@ func (a *App) View() string {
 		)
 	}
 
+	accountBarHeight := 0
+	accountBar := renderAccountBar(a.account, a.width-4)
+	if accountBar != "" {
+		accountBarHeight = 3
+	}
+
 	statusBarHeight := 3
 	searchBarHeight := 0
 	if a.searching {
 		searchBarHeight = 3
 	}
-	panelHeight := a.height - statusBarHeight - searchBarHeight - 2
+	panelHeight := a.height - statusBarHeight - searchBarHeight - accountBarHeight - 2
 	if panelHeight < 3 {
 		panelHeight = 3
 	}
@@ -375,6 +407,9 @@ func (a *App) View() string {
 	statusBar := renderStatusBar(lindensStr, a.config.Filter, a.config.Refresh, a.err, a.searching, a.width-4)
 
 	var sections []string
+	if accountBar != "" {
+		sections = append(sections, accountBar)
+	}
 	sections = append(sections, panels)
 	if a.searching {
 		sections = append(sections, renderSearch(a.search, a.width-4))
@@ -395,6 +430,7 @@ func fetchAllCmd(client *sl.Client) tea.Cmd {
 		fetchFriendsCmd(client),
 		fetchGroupsCmd(client),
 		fetchLindensCmd(client),
+		fetchAccountCmd(client),
 	)
 }
 
@@ -416,5 +452,12 @@ func fetchLindensCmd(client *sl.Client) tea.Cmd {
 	return func() tea.Msg {
 		lindens, err := client.FetchLindens(context.Background())
 		return LindensResultMsg{lindens: lindens, err: err}
+	}
+}
+
+func fetchAccountCmd(client *sl.Client) tea.Cmd {
+	return func() tea.Msg {
+		account, err := client.FetchAccount(context.Background())
+		return AccountResultMsg{account: account, err: err}
 	}
 }

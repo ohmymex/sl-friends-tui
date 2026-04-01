@@ -15,6 +15,7 @@ const (
 	defaultFriendsURL = "/my/widget-friends.php"
 	defaultGroupsURL  = "/my/widget-groups.php"
 	defaultLindensURL = "/my/widget-linden-dollar.php"
+	defaultAccountURL = "/my/account/index.php"
 	defaultTimeout    = 10 * time.Second
 )
 
